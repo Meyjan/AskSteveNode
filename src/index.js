@@ -18,8 +18,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
+// Routes
 app.use('', homeRouter);
 
+// Views
 viewer(app);
 
 // Initiate database and listen
