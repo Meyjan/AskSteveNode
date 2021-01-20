@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 const homeRouter = require('./routers/homeRouter');
 const webhookRouter = require('./routers/webhookRouter');
+const messageRouter = require('./routers/messageRouter');
 
 const viewer = require('./utils/viewer');
 
@@ -23,6 +24,7 @@ app.use(cors());
 // Routes
 app.use('', homeRouter);
 app.use('/webhook', webhookRouter);
+app.use('/messages', messageRouter);
 
 // Views
 viewer(app);
