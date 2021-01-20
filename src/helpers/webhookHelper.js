@@ -11,6 +11,96 @@ const noResponse = ['no', 'nah', 'nope', 'sorry'];
  */
 
 module.exports = {
+    // Counting birthday
+    countBirthday: (birthDate, currentDate) => {
+        let date1 = birthDate;
+        const date2 = currentDate;
+        date1.setYear(date2.getFullYear());
+        if (date1 < date2) {
+            date1.setYear(date1.getFullYear() + 1);
+        }
+
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        return diffDays;
+    },
+
+    // State handler
+    handleState: (customer, received_message) => {
+        const customer_state = customer.state;
+        let response;
+
+        if (customer_state === 0) {
+            response = {
+                "text": `Hello! Please enter your first name!`
+            }
+            customer.state = 1;
+        
+        } else if (customer_state === 1) {
+            response = {
+                "text": `Hello ${received_message.text}! Please enter your birth date!`
+            }
+            customer.state = 2;
+            customer.name = received_message.text;
+
+        } else if (customer_state === 2) {
+            response = {
+                "text": "Thank you. Do you want me to tell you how many days until your next birthday?",
+                "quick_replies":[
+                    {
+                        "content_type":"text",
+                        "title":"Yes",
+                        "payload":"yes"
+                    },{
+                        "content_type":"text",
+                        "title":"No",
+                        "payload":"no"
+                    }
+                ]
+            }
+            customer.state = 3;
+            customer.birthDate = new Date(received_message.text);
+
+        } else if (customer_state === 3) {
+            received_message.text = received_message.text.toLowerCase();
+            if (yesResponse.includes(received_message.text)) {         
+                const diffDays = module.exports.countBirthday(customer.birthDate, new Date());
+                
+                response = {
+                    "text": `Your next birthday will occur in ${diffDays} days.`
+                }
+                customer.state = 0;
+
+            } else if (noResponse.includes(received_message.text)) {
+                response = {
+                    "text": "Thanks."
+                }
+                customer.state = 0;
+
+            } else {
+                response = {
+                    "text": "Unidentified word. Do you want me to tell you how many days until your next birthday?",
+                    "quick_replies":[
+                        {
+                            "content_type":"text",
+                            "title":"Yes",
+                            "payload":"yes"
+                        },{
+                            "content_type":"text",
+                            "title":"No",
+                            "payload":"no"
+                        }
+                    ]
+                }
+            }
+        } else {
+            throw new Error('Unhandled customer state');
+        }
+
+        return [customer, response];
+    },
+
     // Handles messages events
     handleMessage: (sender_psid, received_message) => {
         try {
@@ -23,139 +113,23 @@ module.exports = {
                     if (err) throw err;
                     if (!result) return console.error('Cannot find existing data');
 
-                    const customer = result;
-                    const customer_state = result.state;
+                    let customer = result;
+                    const handleStateResult = module.exports.handleState(customer, received_message);
 
-                    if (customer_state === 0) {
-                        response = {
-                            "text": `Hello! Please enter your first name!`
-                        }
-                        customer.state = 1;
+                    customer = handleStateResult[0];
+                    const response = handleStateResult[1];
 
-                        console.log(customer);
+                    dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
+                        console.log(result);
+                        console.log(err);
+                        if (err) throw err;
 
-                        dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
-                            console.log(result);
-                            console.log(err);
-                            if (err) throw err;
+                        // Sends the response message
+                        console.log(response);
+                        module.exports.callSendAPI(sender_psid, response);
+                    });
 
-                            // Sends the response message
-                            console.log(response);
-                            module.exports.callSendAPI(sender_psid, response);
-                        });
-                    
-                    } else if (customer_state === 1) {
-                        response = {
-                            "text": `Hello ${received_message.text}! Please enter your birth date!`
-                        }
-                        customer.state = 2;
-                        customer.name = received_message.text;
-
-                        dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
-                            if (err) throw err;
-
-                            // Sends the response message
-                            console.log(response);
-                            module.exports.callSendAPI(sender_psid, response);
-                        });
-
-                    } else if (customer_state === 2) {
-                        response = {
-                            "text": "Thank you. Do you want me to tell you how many days until your next birthday?"
-                        }
-                        customer.state = 3;
-                        customer.birthDate = new Date(received_message.text);
-
-                        dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
-                            if (err) throw err;
-
-                            response = {
-                                "text": "Thank you. Do you want me to tell you how many days until your next birthday?",
-                                "quick_replies":[
-                                    {
-                                        "content_type":"text",
-                                        "title":"Yes",
-                                        "payload":"yes"
-                                    },{
-                                        "content_type":"text",
-                                        "title":"No",
-                                        "payload":"no"
-                                    }
-                                ]
-                            }
-
-                            // Sends the response message
-                            console.log(response);
-                            module.exports.callSendAPI(sender_psid, response);
-                        });
-
-                    } else if (customer_state === 3) {
-                        received_message.text = received_message.text.toLowerCase();
-                        if (yesResponse.includes(received_message.text)) {
-                            let date1 = customer.birthDate;
-                            const date2 = new Date();
-                            date1.setYear(date2.getFullYear());
-                            if (date1 < date2) {
-                                date1.setYear(date1.getFullYear() + 1);
-                            }
-
-                            const diffTime = Math.abs(date2 - date1);
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            
-                            response = {
-                                "text": `Your next birthday will occur in ${diffDays} days.`
-                            }
-                            customer.state = 0;
-                            dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
-                                if (err) throw err;
-                                // Sends the response message
-                                console.log(response);
-                                module.exports.callSendAPI(sender_psid, response);
-                            });
-
-                        } else if (noResponse.includes(received_message.text)) {
-                            response = {
-                                "text": "Okay then. No problem."
-                            }
-
-                            customer.state = 0;
-                            dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
-                                if (err) throw err;
-                                // Sends the response message
-                                console.log(response);
-                                module.exports.callSendAPI(sender_psid, response);
-                            });
-
-                        } else {
-                            response = {
-                                "text": "Unidentified word. Do you want me to tell you how many days until your next birthday?"
-                            }
-                            dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
-                                if (err) throw err;
-                                response = {
-                                    "text": "Unidentified word. Do you want me to tell you how many days until your next birthday?",
-                                    "quick_replies":[
-                                        {
-                                            "content_type":"text",
-                                            "title":"Yes",
-                                            "payload":"yes"
-                                        },{
-                                            "content_type":"text",
-                                            "title":"No",
-                                            "payload":"no"
-                                        }
-                                    ]
-                                }
-                                // Sends the response message
-                                console.log(response);
-                                module.exports.callSendAPI(sender_psid, response);
-                            });
-                        }
-                    } else {
-                        throw new Error('Unhandled customer state');
-                    }
                 });
-                
             } else {
                 // Handles non-text message
                 response = {
