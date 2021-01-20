@@ -34,6 +34,10 @@ module.exports = {
 
                         dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
                             if (err) throw err;
+
+                            // Sends the response message
+                            console.log(response);
+                            module.exports.callSendAPI(sender_psid, response);
                         });
                     
                     } else if (customer_state === 1) {
@@ -45,6 +49,10 @@ module.exports = {
 
                         dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
                             if (err) throw err;
+
+                            // Sends the response message
+                            console.log(response);
+                            module.exports.callSendAPI(sender_psid, response);
                         });
 
                     } else if (customer_state === 2) {
@@ -56,22 +64,26 @@ module.exports = {
 
                         dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
                             if (err) throw err;
-                        });
 
-                        response = {
-                            "text": "Thank you. Do you want me to tell you how many days until your next birthday?",
-                            "quick_replies":[
-                                {
-                                    "content_type":"text",
-                                    "title":"Yes",
-                                    "payload":"yes"
-                                },{
-                                    "content_type":"text",
-                                    "title":"No",
-                                    "payload":"no"
-                                }
-                            ]
-                        }
+                            response = {
+                                "text": "Thank you. Do you want me to tell you how many days until your next birthday?",
+                                "quick_replies":[
+                                    {
+                                        "content_type":"text",
+                                        "title":"Yes",
+                                        "payload":"yes"
+                                    },{
+                                        "content_type":"text",
+                                        "title":"No",
+                                        "payload":"no"
+                                    }
+                                ]
+                            }
+
+                            // Sends the response message
+                            console.log(response);
+                            module.exports.callSendAPI(sender_psid, response);
+                        });
 
                     } else if (customer_state === 3) {
                         received_message.text = received_message.text.toLowerCase();
@@ -92,6 +104,9 @@ module.exports = {
                             customer.state = 0;
                             dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
                                 if (err) throw err;
+                                // Sends the response message
+                                console.log(response);
+                                module.exports.callSendAPI(sender_psid, response);
                             });
 
                         } else if (noResponse.includes(received_message.text)) {
@@ -102,6 +117,9 @@ module.exports = {
                             customer.state = 0;
                             dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
                                 if (err) throw err;
+                                // Sends the response message
+                                console.log(response);
+                                module.exports.callSendAPI(sender_psid, response);
                             });
 
                         } else {
@@ -110,22 +128,24 @@ module.exports = {
                             }
                             dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
                                 if (err) throw err;
+                                response = {
+                                    "text": "Unidentified word. Do you want me to tell you how many days until your next birthday?",
+                                    "quick_replies":[
+                                        {
+                                            "content_type":"text",
+                                            "title":"Yes",
+                                            "payload":"yes"
+                                        },{
+                                            "content_type":"text",
+                                            "title":"No",
+                                            "payload":"no"
+                                        }
+                                    ]
+                                }
+                                // Sends the response message
+                                console.log(response);
+                                module.exports.callSendAPI(sender_psid, response);
                             });
-
-                            response = {
-                                "text": "Unidentified word. Do you want me to tell you how many days until your next birthday?",
-                                "quick_replies":[
-                                    {
-                                        "content_type":"text",
-                                        "title":"Yes",
-                                        "payload":"yes"
-                                    },{
-                                        "content_type":"text",
-                                        "title":"No",
-                                        "payload":"no"
-                                    }
-                                ]
-                            }
                         }
                     } else {
                         throw new Error('Unhandled customer state');
@@ -137,11 +157,10 @@ module.exports = {
                 response = {
                     "text": `This chatbot only handles text messages!`
                 }
+                // Sends the response message
+                console.log(response);
+                module.exports.callSendAPI(sender_psid, response);
             } 
-            
-            // Sends the response message
-            console.log(response);
-            module.exports.callSendAPI(sender_psid, response);
         } catch (err) {
             console.error(err);
         }
