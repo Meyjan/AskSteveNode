@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const homeRouter = require('./routers/homeRouter');
 const webhookRouter = require('./routers/webhookRouter');
 
-const viewer = require('./helpers/viewer');
+const viewer = require('./utils/viewer');
 
 // Constants
 const PORT = process.env.PORT || 8080;
