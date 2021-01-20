@@ -31,5 +31,10 @@ Lastly, you can also setup a messenger plugin to your own website that can sends
 ![Step_4](images/step4.png)
 
 ## Application Demo
+### Chatbot Demo
 This shows a demo of the chatbot app.
 ![Demo](gif/demo.gif)
+
+### API Demo
+This shows a demo of the API of the app.
+![Demo_API](gif/demo_api.gif)
