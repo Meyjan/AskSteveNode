@@ -45,6 +45,13 @@ module.exports = {
         module.exports.callSendAPI(sender_psid, response);
     },
 
+    handleReferral: (sender_psid, received_referral) => {
+        // Welcome message
+        let response = { "text": "Hi! How can I help you?" };
+
+        module.exports.callSendAPI(sender_psid, response);
+    },
+
     // Sends response messages via the Send API
     callSendAPI: (sender_psid, response) => {
         // Construct the message body

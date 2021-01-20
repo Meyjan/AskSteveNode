@@ -39,10 +39,7 @@ module.exports = {
         let body = req.body;
 
         // Checks this is an event from a page subscription
-        if (body.object === 'page') {
-            console.log('READING BODY');
-            console.log(body);
-      
+        if (body.object === 'page') {      
             // Iterates over each entry - there may be multiple if batched
             body.entry.forEach(function(entry) {
         
@@ -61,14 +58,15 @@ module.exports = {
                     webhookHelper.handleMessage(sender_psid, webhook_event.message);        
                 } else if (webhook_event.postback) {
                     webhookHelper.handlePostback(sender_psid, webhook_event.postback);
+                } else if (webhook_event.referral) {
+                    webhookHelper.handleReferral(sender_psid, webhook_event.referral);
                 }
             });
         
             // Returns a '200 OK' response to all requests
             res.status(200).send('EVENT_RECEIVED');
+
         } else {
-            console.log('BODY NOT PAGE');
-            console.log(body);
             // Returns a '404 Not Found' if event is not from a page subscription
             res.sendStatus(404);
         }
