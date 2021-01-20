@@ -40,6 +40,8 @@ module.exports = {
 
         // Checks this is an event from a page subscription
         if (body.object === 'page') {
+            console.log('READING BODY');
+            console.log(body);
       
             // Iterates over each entry - there may be multiple if batched
             body.entry.forEach(function(entry) {
