@@ -1,3 +1,5 @@
+const request = require('request');
+
 /**
  * Webhook Helper
  * 
@@ -46,7 +48,7 @@ module.exports = {
         } 
         
         // Sends the response message
-        this.callSendAPI(sender_psid, response);
+        module.exports.callSendAPI(sender_psid, response);
     },
 
     // Handles messaging_postbacks events
@@ -64,7 +66,7 @@ module.exports = {
         }
 
         // Send the message to acknowledge the postback
-        this.callSendAPI(sender_psid, response);
+        module.exports.callSendAPI(sender_psid, response);
     },
 
     // Sends response messages via the Send API
