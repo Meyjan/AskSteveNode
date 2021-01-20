@@ -8,6 +8,7 @@ const request = require('request');
 module.exports = {
     // Handles messages events
     handleMessage: (sender_psid, received_message) => {
+        console.log('IN HANDLE MESSAGE', sender_psid);
         let response;
 
         // Check if the message contains text
@@ -47,6 +48,7 @@ module.exports = {
 
     handleReferral: (sender_psid, received_referral) => {
         // Welcome message
+        console.log('IN HANDLE REFERRAL', sender_psid);
         let response = { "text": "Hi! How can I help you?" };
 
         module.exports.callSendAPI(sender_psid, response);

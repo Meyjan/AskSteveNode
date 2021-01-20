@@ -59,6 +59,7 @@ module.exports = {
                 } else if (webhook_event.postback) {
                     webhookHelper.handlePostback(sender_psid, webhook_event.postback);
                 } else if (webhook_event.referral) {
+                    console.log('IN')
                     webhookHelper.handleReferral(sender_psid, webhook_event.referral);
                 }
             });
