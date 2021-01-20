@@ -59,7 +59,9 @@ module.exports = {
                 } else if (webhook_event.postback) {
                     webhookHelper.handlePostback(sender_psid, webhook_event.postback);
                 } else if (webhook_event.referral) {
-                    sender_psid = webhook_event.sender.user_ref;
+                    if (!sender_psid) {
+                        sender_psid = webhook_event.sender.user_ref;
+                    }
                     webhookHelper.handleReferral(sender_psid, webhook_event.referral);
                 }
             });
