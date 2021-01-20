@@ -28,5 +28,8 @@ This step is done to connect the application towards the facebook app. That way 
 ![Step_3](images/step3.png)
 ### 4. Using the Facebook Messenger Plugin for the Website
 Lastly, you can also setup a messenger plugin to your own website that can sends the message towards this application.
-![Step_3](images/step4.png)
+![Step_4](images/step4.png)
 
+## Application Demo
+This shows a demo of the chatbot app.
+![Demo](gif/demo.gif)
