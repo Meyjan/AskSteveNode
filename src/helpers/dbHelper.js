@@ -89,7 +89,7 @@ module.exports = {
                 }
                 module.exports.addNewMessage(replyObj, (err3, result3) => {
                     if (err3) return callback (err3);
-                    return (null, (message, reply, customer));
+                    callback (null, (message, reply, customer));
                 })
             })
         })

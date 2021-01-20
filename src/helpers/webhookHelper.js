@@ -32,7 +32,11 @@ module.exports = {
                         }
                         customer.state = 1;
 
+                        console.log(customer);
+
                         dbHelper.logMessageAndUpdateCustomer(received_message.text, response.text, customer, (err, result) => {
+                            console.log(result);
+                            console.log(err);
                             if (err) throw err;
 
                             // Sends the response message
