@@ -8,6 +8,9 @@ const webhookHelper = require('../helpers/webhookHelper');
 module.exports = {
     // Adds support for GET requests to our webhook
     getWebhook: (req, res) => {
+        console.log('GET START');
+        console.log(req);
+
         // Your verify token. Should be a random string.
         let VERIFY_TOKEN = process.env.FACEBOOK_PAGE_VERIFY_TOKEN;
             
@@ -36,6 +39,9 @@ module.exports = {
     // Creates the endpoint for our webhook
     postWebhook: (req, res) => {
         let body = req.body;
+
+        console.log('POST START');
+        console.log(body);
 
         // Checks this is an event from a page subscription
         if (body.object === 'page') {
