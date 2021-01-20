@@ -8,7 +8,6 @@ const request = require('request');
 module.exports = {
     // Handles messages events
     handleMessage: (sender_psid, received_message) => {
-        console.log('IN HANDLE MESSAGE', sender_psid);
         let response;
 
         // Check if the message contains text
@@ -47,11 +46,12 @@ module.exports = {
     },
 
     handleReferral: (sender_psid, received_referral) => {
-        // Welcome message
-        console.log('IN HANDLE REFERRAL', sender_psid);
-        let response = { "text": "Hi! How can I help you?" };
+        // Check before giving welcome message
+        if (received_referral.type === 'OPEN_THREAD') {
+            let response = { "text": "Hi! How can I help you?" };
 
-        module.exports.callSendAPI(sender_psid, response);
+            module.exports.callSendAPI(sender_psid, response);
+        }
     },
 
     // Sends response messages via the Send API
