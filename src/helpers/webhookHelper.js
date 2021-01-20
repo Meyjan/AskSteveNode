@@ -8,19 +8,18 @@ const request = require('request');
 module.exports = {
     // Handles messages events
     handleMessage: (sender_psid, received_message) => {
-
         let response;
 
         // Check if the message contains text
-        if (received_message.text) {    
+        if (received_message.text) {
             // Create the payload for a basic text message
             response = {
-                "text": `You sent the message: "${received_message.text}". Now send me an image!`
+                "text": `You sent the message: "${received_message.text}"`
             }
         } else {
-            // Create the payload for a basic text message
+            // Handles non-text message
             response = {
-                "text": `This chatbot doesn't handle attachment!`
+                "text": `This chatbot only handles text messages!`
             }
         } 
         
