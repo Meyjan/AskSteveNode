@@ -11,6 +11,8 @@ module.exports = {
 
         let response;
 
+        console.log(received_message);
+
         // Check if the message contains text
         if (received_message.text) {    
             // Create the payload for a basic text message
