@@ -1,22 +1,29 @@
 const db = require('../utils/db');
-const conn = db.conn();
+const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
 
 // Get collections
 const userCollectionName = process.env.USER_COLLECTION;
 const messageCollectionName = process.env.MESSAGE_COLLECTION;
-const userCollection = conn.collection(userCollectionName);
-const messageCollection = conn.collection(messageCollectionName);
 
 module.exports = {
     getAllMessages: (callback) => {
-        messageCollection.find().toArray((err, result) => {
+        const conn = db.conn();
+        const messageCollection = conn.collection(messageCollectionName);
+
+        return messageCollection.find({}, (err, result) => {
             if (err) return callback(err);
-            return callback(null, result);
+            result.toArray((err, result2) => {
+                if (err) return callback(err);
+                return callback(null, result2);
+            });
         });
     },
 
     getMessageById: (messageId, callback) => {
+        const conn = db.conn();
+        const messageCollection = conn.collection(messageCollectionName);
+
         try {
             const query = { _id: ObjectId(messageId) };
             messageCollection.findOne(query, (err, result) => {
@@ -30,14 +37,23 @@ module.exports = {
     },
 
     getAllMessagesByCustomer: (customerId, callback) => {
+        const conn = db.conn();
+        const messageCollection = conn.collection(messageCollectionName);
+
         const query = { customerId: parseInt(customerId) };
-        messageCollection.find(query).toArray((err, result) => {
+        return messageCollection.find(query, (err, result) => {
             if (err) return callback(err);
-            return callback(null, result);
+            result.toArray((err, result2) => {
+                if (err) return callback(err);
+                return callback(null, result2);
+            });
         });
     },
 
     addNewMessage: (message, callback) => {
+        const conn = db.conn();
+        const messageCollection = conn.collection(messageCollectionName);
+
         messageCollection.insertOne(message, (err, result) => {
             if (err) return callback(err);
             return callback(null, result);
@@ -45,6 +61,9 @@ module.exports = {
     },
 
     deleteMessageById: (messageId, callback) => {
+        const conn = db.conn();
+        const messageCollection = conn.collection(messageCollectionName);
+        
         try {
             const query = { _id:  ObjectId(messageId) };
             messageCollection.deleteOne(query, (err, result) => {
@@ -58,6 +77,9 @@ module.exports = {
     },
 
     getCustomerData: (customerId, callback) => {
+        const conn = db.conn();
+        const userCollection = conn.collection(userCollectionName);
+
         const query = { _id: customerId };
         userCollection.findOne(query, (err, result) => {
             if (err) return callback(err);
@@ -66,6 +88,9 @@ module.exports = {
     },
 
     addNewCustomer: (customer, callback) => {
+        const conn = db.conn();
+        const userCollection = conn.collection(userCollectionName);
+
         userCollection.insertOne(customer, (err, result) => {
             if (err) return callback(err);
             return callback(null, result);
@@ -73,6 +98,9 @@ module.exports = {
     },
 
     updateCustomer: (customer, callback) => {
+        const conn = db.conn();
+        const userCollection = conn.collection(userCollectionName);
+        
         const query = { _id:  customer._id };
         const { _id, ...updatedCustomer } = customer;
         const updatedObj = { $set: updatedCustomer };
